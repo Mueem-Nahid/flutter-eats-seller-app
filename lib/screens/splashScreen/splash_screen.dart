@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_eats_seller_app/screens/mainScreens/home_screen.dart';
+import 'package:flutter_eats_seller_app/screens/authScreens/auth_screen.dart';
 
 class MySplashScreen extends StatefulWidget {
   const MySplashScreen({super.key});
@@ -14,7 +14,7 @@ class _MySplashScreenState extends State<MySplashScreen> {
   initTimer() {
     Timer(const Duration(seconds: 3), () async {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => HomeScreen()));
+          context, MaterialPageRoute(builder: (context) => AuthScreen()));
     });
   }
 
