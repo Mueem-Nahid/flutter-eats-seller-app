@@ -10,12 +10,18 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
-    return const SingleChildScrollView(
+    return  SingleChildScrollView(
       child: Column(
         children: [
-          Text(
-            'Sign up',
-            style: TextStyle(fontSize: 30, color: Colors.grey),
+          const SizedBox(
+            height: 11,
+          ),
+          InkWell(
+            onTap: (){print('here');},
+            child: CircleAvatar(
+              radius: MediaQuery.of(context).size.width * 0.20,
+              backgroundColor: Colors.white,
+            ),
           )
         ],
       ),
