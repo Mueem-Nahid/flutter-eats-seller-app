@@ -29,7 +29,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
       padding: const EdgeInsets.all(8),
-      margin: const EdgeInsets.all(8),
+      margin: const EdgeInsets.all(14),
       child: TextFormField(
         enabled: widget.enabled,
         controller: widget.textEditingController,
