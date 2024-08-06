@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../widgets/custom_text_field.dart';
@@ -25,6 +27,10 @@ class _SignupScreenState extends State<SignupScreen> {
   TextEditingController phoneTextEditingController = TextEditingController();
   TextEditingController locationTextEditingController = TextEditingController();
 
+  Position? position;
+  List<Placemark>? placemark;
+  String fullAddress = '';
+
   // method to get image from gallery
   pickImageFromGallery() async {
     // send the user to the gallery
@@ -34,6 +40,21 @@ class _SignupScreenState extends State<SignupScreen> {
     setState(() {
       imageFile;
     });
+  }
+
+  // get my location method
+  getCurrentLocation() async {
+    // get user's current location in lat lon
+    // Position currentPosition =
+    //     await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    // //  convert into human readable address
+    // placemark = await placemarkFromCoordinates(
+    //     currentPosition.latitude, currentPosition.longitude);
+    // print('here location $placemark');
+    // Placemark firstPlacemark = placemark![0];
+    // fullAddress =
+    //     '${firstPlacemark.subThoroughfare} ${firstPlacemark.thoroughfare}, ${firstPlacemark.subLocality} ${firstPlacemark.locality}, ${firstPlacemark.subAdministrativeArea}, ${firstPlacemark.administrativeArea} ${firstPlacemark.postalCode}, ${firstPlacemark.country}';
+    // locationTextEditingController.text = fullAddress;
   }
 
   @override
@@ -119,7 +140,9 @@ class _SignupScreenState extends State<SignupScreen> {
                     height: 39,
                     alignment: Alignment.center,
                     child: ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        getCurrentLocation();
+                      },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
                           shape: RoundedRectangleBorder(
