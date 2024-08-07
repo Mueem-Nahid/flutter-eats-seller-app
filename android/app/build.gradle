@@ -24,6 +24,7 @@ if (flutterVersionName == null) {
 }
 
 android {
+    compileSdkVersion 33
     namespace = "com.mueem.flutter_eats_seller_app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
