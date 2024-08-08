@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -18,5 +19,10 @@ class CommonViewModel {
     fullAddress =
         '${firstPlacemark.subThoroughfare} ${firstPlacemark.thoroughfare}, ${firstPlacemark.subLocality} ${firstPlacemark.locality}, ${firstPlacemark.subAdministrativeArea}, ${firstPlacemark.administrativeArea} ${firstPlacemark.postalCode}, ${firstPlacemark.country}';
     return fullAddress;
+  }
+
+  showSnackBar (String message, BuildContext context) {
+    final snackBar = SnackBar(content: Text(message));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

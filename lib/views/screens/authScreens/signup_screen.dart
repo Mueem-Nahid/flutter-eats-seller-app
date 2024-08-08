@@ -1,9 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_eats_seller_app/viewModel/common_view_model.dart';
+import 'package:flutter_eats_seller_app/global/global_vars.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../global/global_instances.dart';
 import '../../widgets/custom_text_field.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -25,8 +26,6 @@ class _SignupScreenState extends State<SignupScreen> {
       TextEditingController();
   TextEditingController phoneTextEditingController = TextEditingController();
   TextEditingController locationTextEditingController = TextEditingController();
-
-  CommonViewModel commonViewModel = CommonViewModel();
 
   // method to get image from gallery
   pickImageFromGallery() async {
@@ -150,7 +149,17 @@ class _SignupScreenState extends State<SignupScreen> {
                     height: 32,
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      authViewModel.validateSignUpForm(
+                          imageFile,
+                          passwordTextEditingController.text.trim(),
+                          confirmPasswordTextEditingController.text.trim(),
+                          nameTextEditingController.text.trim(),
+                          emailTextEditingController.text.trim(),
+                          phoneTextEditingController.text.trim(),
+                          fullAddress,
+                          context);
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
                       padding: const EdgeInsets.symmetric(
