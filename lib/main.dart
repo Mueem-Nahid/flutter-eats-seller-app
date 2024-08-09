@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Eats: Seller app',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: Colors.black),
-      home: MySplashScreen(),
+      home: const MySplashScreen(),
     );
   }
 }
