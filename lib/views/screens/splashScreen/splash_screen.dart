@@ -14,7 +14,7 @@ class _MySplashScreenState extends State<MySplashScreen> {
   initTimer() {
     Timer(const Duration(seconds: 3), () async {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => AuthScreen()));
+          context, MaterialPageRoute(builder: (context) => const AuthScreen()));
     });
   }
 
