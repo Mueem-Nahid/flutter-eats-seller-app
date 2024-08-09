@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_eats_seller_app/global/global_instances.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,7 +13,7 @@ class AuthViewModel {
     String phone,
     String address,
     BuildContext ctx,
-  ) {
+  ) async {
     if (imageXFile == null) {
       commonViewModel.showSnackBar("Please select an image", ctx);
     } else if (password.isEmpty || confirmPassword.isEmpty) {
@@ -39,6 +40,23 @@ class AuthViewModel {
       commonViewModel.showSnackBar("Please enter your address", ctx);
     } else {
       // Sign up
+      await createUserInFirebaseAuth(email, password, ctx);
     }
+  }
+
+  // create user in firebase
+  createUserInFirebaseAuth(
+      String email, String password, BuildContext context) async {
+    User? currentFirebaseUser;
+
+    await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(email: email, password: password)
+        .then((authValue) {
+      currentFirebaseUser = authValue.user;
+    }).catchError((error) {
+      commonViewModel.showSnackBar(error, context);
+    });
+
+    if (currentFirebaseUser == null) return;
   }
 }

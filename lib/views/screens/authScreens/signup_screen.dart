@@ -149,8 +149,8 @@ class _SignupScreenState extends State<SignupScreen> {
                     height: 32,
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      authViewModel.validateSignUpForm(
+                    onPressed: () async {
+                      await authViewModel.validateSignUpForm(
                           imageFile,
                           passwordTextEditingController.text.trim(),
                           confirmPasswordTextEditingController.text.trim(),
