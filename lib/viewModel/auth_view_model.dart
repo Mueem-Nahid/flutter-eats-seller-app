@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_eats_seller_app/global/global_instances.dart';
+import 'package:flutter_eats_seller_app/global/global_vars.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AuthViewModel {
@@ -40,8 +42,12 @@ class AuthViewModel {
       commonViewModel.showSnackBar("Please enter your address", ctx);
     } else {
       // Sign up
-      await createUserInFirebaseAuth(email, password, ctx);
-      String downloadUrl = await commonViewModel.uploadImageToFirebaseStorage(imageXFile);
+      User? currentFirebaseUser =
+          await createUserInFirebaseAuth(email, password, ctx);
+      String downloadUrl =
+          await commonViewModel.uploadImageToFirebaseStorage(imageXFile);
+      await saveUserDataIntoFirestore(currentFirebaseUser, downloadUrl, name,
+          email, password, address, phone);
     }
   }
 
@@ -59,5 +65,27 @@ class AuthViewModel {
     });
 
     if (currentFirebaseUser == null) return;
+
+    return currentFirebaseUser;
   }
+}
+
+// save data info firestore
+saveUserDataIntoFirestore(currentFirebaseUser, downloadUrl, name, email,
+    password, address, phone) async {
+  FirebaseFirestore.instance
+      .collection('sellers')
+      .doc(currentFirebaseUser.uid)
+      .set({
+    'uid': currentFirebaseUser.uid,
+    'email': email,
+    'name': name,
+    'image': downloadUrl,
+    'phone': phone,
+    'address': address,
+    'status': 'approved',
+    'earnings': 0.0,
+    'latitude': position!.latitude,
+    'longitude': position!.longitude,
+  });
 }
