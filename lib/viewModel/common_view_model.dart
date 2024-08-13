@@ -46,4 +46,9 @@ class CommonViewModel {
     });
     return downloadUrl;
   }
+
+  // save data locally
+  saveDataIntoLocalStorage(key, value) async {
+    await sharedPreferences?.setString(key, value);
+  }
 }

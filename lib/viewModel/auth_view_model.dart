@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_eats_seller_app/global/global_instances.dart';
 import 'package:flutter_eats_seller_app/global/global_vars.dart';
+import 'package:flutter_eats_seller_app/views/screens/mainScreens/home_screen.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AuthViewModel {
@@ -42,6 +44,8 @@ class AuthViewModel {
       commonViewModel.showSnackBar("Please enter your address", ctx);
     } else {
       // Sign up
+      commonViewModel.showSnackBar('Please wait...', ctx);
+
       User? currentFirebaseUser =
           await createUserInFirebaseAuth(email, password, ctx);
       String downloadUrl =
@@ -49,6 +53,10 @@ class AuthViewModel {
       await saveUserDataIntoFirestore(currentFirebaseUser, downloadUrl, name,
           email, password, address, phone);
     }
+
+    Navigator.push(ctx, MaterialPageRoute(builder: (ctx) => HomeScreen()));
+
+    commonViewModel.showSnackBar('Account created successfully', ctx);
   }
 
   // create user in firebase
@@ -88,4 +96,9 @@ saveUserDataIntoFirestore(currentFirebaseUser, downloadUrl, name, email,
     'latitude': position!.latitude,
     'longitude': position!.longitude,
   });
+
+  commonViewModel.saveDataIntoLocalStorage('uid', currentFirebaseUser.uid);
+  commonViewModel.saveDataIntoLocalStorage('email', email);
+  commonViewModel.saveDataIntoLocalStorage('name', name);
+  commonViewModel.saveDataIntoLocalStorage('imageUrl', downloadUrl);
 }
