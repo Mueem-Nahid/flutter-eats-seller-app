@@ -41,6 +41,7 @@ class AuthViewModel {
     } else {
       // Sign up
       await createUserInFirebaseAuth(email, password, ctx);
+      String downloadUrl = await commonViewModel.uploadImageToFirebaseStorage(imageXFile);
     }
   }
 
