@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_eats_seller_app/global/global_instances.dart';
 import 'package:flutter_eats_seller_app/views/widgets/custom_text_field.dart';
 
 class SigninScreen extends StatefulWidget {
@@ -51,7 +52,13 @@ class _SigninScreenState extends State<SigninScreen> {
                     height: 8,
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      authViewModel.validateSignInForm(
+                        emailTextEditingController.text.trim(),
+                        passwordTextEditingController.text.trim(),
+                        context
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
                       padding: const EdgeInsets.symmetric(

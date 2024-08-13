@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_eats_seller_app/global/global_instances.dart';
 import 'package:flutter_eats_seller_app/global/global_vars.dart';
@@ -72,33 +71,98 @@ class AuthViewModel {
       commonViewModel.showSnackBar(error, context);
     });
 
-    if (currentFirebaseUser == null) return;
+    if (currentFirebaseUser == null) signOut();
 
     return currentFirebaseUser;
   }
-}
 
-// save data info firestore
-saveUserDataIntoFirestore(currentFirebaseUser, downloadUrl, name, email,
-    password, address, phone) async {
-  FirebaseFirestore.instance
-      .collection('sellers')
-      .doc(currentFirebaseUser.uid)
-      .set({
-    'uid': currentFirebaseUser.uid,
-    'email': email,
-    'name': name,
-    'image': downloadUrl,
-    'phone': phone,
-    'address': address,
-    'status': 'approved',
-    'earnings': 0.0,
-    'latitude': position!.latitude,
-    'longitude': position!.longitude,
-  });
+  // save data info firestore
+  saveUserDataIntoFirestore(currentFirebaseUser, downloadUrl, name, email,
+      password, address, phone) async {
+    FirebaseFirestore.instance
+        .collection('sellers')
+        .doc(currentFirebaseUser.uid)
+        .set({
+      'uid': currentFirebaseUser.uid,
+      'email': email,
+      'name': name,
+      'image': downloadUrl,
+      'phone': phone,
+      'address': address,
+      'status': 'approved',
+      'earnings': 0.0,
+      'latitude': position!.latitude,
+      'longitude': position!.longitude,
+    });
 
-  commonViewModel.saveDataIntoLocalStorage('uid', currentFirebaseUser.uid);
-  commonViewModel.saveDataIntoLocalStorage('email', email);
-  commonViewModel.saveDataIntoLocalStorage('name', name);
-  commonViewModel.saveDataIntoLocalStorage('imageUrl', downloadUrl);
+    commonViewModel.saveDataIntoLocalStorage('uid', currentFirebaseUser.uid);
+    commonViewModel.saveDataIntoLocalStorage('email', email);
+    commonViewModel.saveDataIntoLocalStorage('name', name);
+    commonViewModel.saveDataIntoLocalStorage('imageUrl', downloadUrl);
+  }
+
+  validateSignInForm(String email, String password, BuildContext ctx) async {
+    if (email.isNotEmpty && password.isNotEmpty) {
+      // login
+      commonViewModel.showSnackBar('Checking credentials...', ctx);
+      User? currentFirebaseUser = await loginUser(email, password, ctx);
+      await readDataFromFirestoreAndSetDataLocally(currentFirebaseUser, ctx);
+      Navigator.push(ctx, MaterialPageRoute(builder: (ctx) => HomeScreen()));
+    } else {
+      commonViewModel.showSnackBar('Email and Password are required', ctx);
+      return;
+    }
+  }
+
+  loginUser(email, password, ctx) async {
+    User? currentFirebaseUser;
+
+    await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password)
+        .then((authValue) {
+      currentFirebaseUser = authValue.user;
+    }).catchError((message) {
+      commonViewModel.showSnackBar(message.toString(), ctx);
+      return;
+    });
+
+    if (currentFirebaseUser == null) {
+      signOut();
+    }
+
+    return currentFirebaseUser;
+  }
+
+  signOut() {
+    FirebaseAuth.instance.signOut();
+    return;
+  }
+
+  readDataFromFirestoreAndSetDataLocally(
+      User? currentFirebaseUser, BuildContext ctx) async {
+    await FirebaseFirestore.instance
+        .collection('sellers')
+        .doc(currentFirebaseUser?.uid)
+        .get()
+        .then((dataSnapshot) async {
+      if (dataSnapshot.exists) {
+        if (dataSnapshot.data()?['status'] == 'approved') {
+          commonViewModel.saveDataIntoLocalStorage(
+              'uid', currentFirebaseUser?.uid);
+          commonViewModel.saveDataIntoLocalStorage(
+              'email', dataSnapshot.data()?['email']);
+          commonViewModel.saveDataIntoLocalStorage(
+              'name', dataSnapshot.data()?['name']);
+          commonViewModel.saveDataIntoLocalStorage(
+              'imageUrl', dataSnapshot.data()?['image']);
+        } else {
+          commonViewModel.showSnackBar('You are blocked by admin', ctx);
+          signOut();
+        }
+      } else {
+        commonViewModel.showSnackBar('User not found', ctx);
+        signOut();
+      }
+    });
+  }
 }
