@@ -47,6 +47,9 @@ class AuthViewModel {
 
       User? currentFirebaseUser =
           await createUserInFirebaseAuth(email, password, ctx);
+
+      if (currentFirebaseUser == null) return;
+
       String downloadUrl =
           await commonViewModel.uploadImageToFirebaseStorage(imageXFile);
       await saveUserDataIntoFirestore(currentFirebaseUser, downloadUrl, name,
@@ -68,10 +71,10 @@ class AuthViewModel {
         .then((authValue) {
       currentFirebaseUser = authValue.user;
     }).catchError((error) {
-      commonViewModel.showSnackBar(error, context);
+      commonViewModel.showSnackBar(error.toString(), context);
     });
 
-    if (currentFirebaseUser == null) signOut();
+    if (currentFirebaseUser == null) return signOut();
 
     return currentFirebaseUser;
   }
@@ -106,11 +109,12 @@ class AuthViewModel {
       // login
       commonViewModel.showSnackBar('Checking credentials...', ctx);
       User? currentFirebaseUser = await loginUser(email, password, ctx);
+      if (currentFirebaseUser == null) {
+        return signOut();
+      }
       await readDataFromFirestoreAndSetDataLocally(currentFirebaseUser, ctx);
-      Navigator.push(ctx, MaterialPageRoute(builder: (ctx) => HomeScreen()));
     } else {
       commonViewModel.showSnackBar('Email and Password are required', ctx);
-      return;
     }
   }
 
@@ -123,19 +127,13 @@ class AuthViewModel {
       currentFirebaseUser = authValue.user;
     }).catchError((message) {
       commonViewModel.showSnackBar(message.toString(), ctx);
-      return;
     });
-
-    if (currentFirebaseUser == null) {
-      signOut();
-    }
 
     return currentFirebaseUser;
   }
 
   signOut() {
     FirebaseAuth.instance.signOut();
-    return;
   }
 
   readDataFromFirestoreAndSetDataLocally(
@@ -155,9 +153,10 @@ class AuthViewModel {
               'name', dataSnapshot.data()?['name']);
           commonViewModel.saveDataIntoLocalStorage(
               'imageUrl', dataSnapshot.data()?['image']);
+          Navigator.push(ctx, MaterialPageRoute(builder: (ctx) => HomeScreen()));
         } else {
           commonViewModel.showSnackBar('You are blocked by admin', ctx);
-          signOut();
+          return signOut();
         }
       } else {
         commonViewModel.showSnackBar('User not found', ctx);
